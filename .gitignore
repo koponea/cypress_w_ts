@@ -1,0 +1,8 @@
+#files
+cypress.env.json
+cypress/downloads/
+
+#claude
+CLAUDE.md 
+.claude/
+
