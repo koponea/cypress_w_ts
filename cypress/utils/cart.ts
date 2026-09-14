@@ -1,26 +1,36 @@
 import * as gen from '../utils/general-utils'
 
-/** locators */
-export const cartList: string = gen.dataTest('cart-list');
-export const cartItem: string = gen.dataTest('inventory-item');
-export const cartItemName: string = gen.dataTest('inventory-item-name');
-export const removeFromCartButton: string = gen.dataTestStartsWith('remove-');
-export const continueShoppingButton: string = gen.dataTest('continue-shopping');
-export const checkoutButton: string = gen.dataTest('checkout');
+export class SauceDemoCartPage {
+  /** locators */
+  readonly cartList: string = gen.dataTest('cart-list');
+  readonly cartItem: string = gen.dataTest('inventory-item');
+  readonly cartItemName: string = gen.dataTest('inventory-item-name');
+  readonly removeFromCartButton: string = gen.dataTestStartsWith('remove-');
+  readonly continueShoppingButton: string = gen.dataTest('continue-shopping');
+  readonly checkoutButton: string = gen.dataTest('checkout');
 
-/** functions */
-export const getItemNameAtIndex = (index: number): Cypress.Chainable<string> =>
-  cy.get(cartItem).eq(index).find(cartItemName).invoke('text');
+  /** methods */
+  getItemNameAtIndex(index: number): Cypress.Chainable<string> {
+    return cy.get(this.cartItem).eq(index).find(this.cartItemName).invoke('text');
+  }
 
-export const removeItemAtIndex = (index: number): Cypress.Chainable =>
-  cy.get(cartItem).eq(index).find(removeFromCartButton).click();
+  removeItemAtIndex(index: number): Cypress.Chainable {
+    return cy.get(this.cartItem).eq(index).find(this.removeFromCartButton).click();
+  }
 
-export const assertCartIsEmpty = (): Cypress.Chainable =>
-  cy.get(cartList).find(cartItem).should('not.exist');
+  assertCartIsEmpty(): Cypress.Chainable {
+    return cy.get(this.cartList).find(this.cartItem).should('not.exist');
+  }
 
-export const assertCartItemCount = (count: number): Cypress.Chainable =>
-  cy.get(cartItem).should('have.length', count);
+  assertCartItemCount(count: number): Cypress.Chainable {
+    return cy.get(this.cartItem).should('have.length', count);
+  }
 
-export const continueShopping = (): Cypress.Chainable => cy.get(continueShoppingButton).click();
+  continueShopping(): Cypress.Chainable {
+    return cy.get(this.continueShoppingButton).click();
+  }
 
-export const goToCheckout = (): Cypress.Chainable => cy.get(checkoutButton).click();
+  goToCheckout(): Cypress.Chainable {
+    return cy.get(this.checkoutButton).click();
+  }
+}

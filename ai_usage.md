@@ -81,3 +81,23 @@ Yksittäisten ajojen raa'at testiajat (ms), viisi ajoa per testitapaus:
 
 Johtopäätös: suite-tason kokonaiskesto on identtinen (11,00 s molemmilla, ei hajontaa ajojen välillä sekuntitarkkuudella). Testikohtaisten aikojen summissa TS on keskimäärin ~167 ms (~1,7 %) hitaampi, mikä on selvästi pienempi kuin yksittäisten testien ajonaikainen hajonta (esim. "Basic login" vaihteli JS:ssä 908–1166 ms viiden ajon välillä) — ero selittyy ajonaikaisella satunnaisvaihtelulla (verkko, DOM-renderöinti), ei TypeScript-transpiloinnin aiheuttamalla systemaattisella ylikuormalla.
 
+## Ajoaikavertailu sivuobjektirefaktoroinnin jälkeen (1 ajo)
+
+Sivuobjektiluokkiin (`SauceDemoLoginPage`, `SauceDemoInventoryPage`, `SauceDemoDetailsPage`, `SauceDemoCartPage`, `SauceDemoCheckoutInfoPage`, `SauceDemoCheckoutOverviewPage`, `SauceDemoCheckoutCompletePage`) siirtymisen jälkeen sarjat ajettiin uudelleen kertaalleen (`npx cypress run --spec ...`), molemmissa 6/6 läpäisi:
+
+| Testitapaus | TS (.cy.ts, luokat) | JS (.cy.js) | Erotus (TS − JS) |
+|---|---|---|---|
+| Basic login with general access credentials | 1141 ms | 1026 ms | +115 ms |
+| Linking outside the portal | 1629 ms | 1464 ms | +165 ms |
+| Items can be browsed and de-carted with regular logout | 1475 ms | 1477 ms | −2 ms |
+| Bailing out mid shopping | 909 ms | 915 ms | −6 ms |
+| Checking out with purchase and receipt | 2893 ms | 2469 ms | +424 ms |
+| Cheking out with no purchase | 2205 ms | 2191 ms | +14 ms |
+| **Yhteensä (testien summa)** | **10 252 ms** | **9 542 ms** | **+710 ms** |
+| **Suite-taso (raportoitu)** | 12 s | 11 s | +1 s |
+
+Havainnot:
+
+* Tämäkin on yhden ajon mittaus, joten sisältää normaalia ajonaikaista vaihtelua — ks. yllä oleva 5 ajon keskiarvovertailu, jossa TS oli vain ~167 ms (~1,7 %) hitaampi summattuna. Tässä yksittäisessä ajossa erotus on suurempi (+710 ms, ~7 %) ja suite-taso ylitti sekuntirajan (12 s vs. 11 s), mutta "Checking out with purchase and receipt" -testin +424 ms selittää yksinään yli puolet koko erosta — mikä sopii yhden ajon satunnaisvaihteluun (verkko, DOM, PDF-generointi) eikä ole toistuva.
+* Luokkapohjainen (page object -malli, `new SauceDemoXxxPage()` + `this.locator`-viittaukset instanssimetodeissa) rakenne ei tuo mitään ajonaikaista ylimääräistä työtä verrattuna moduulifunktio-tyyliin: locator-kentät alustetaan kerran luokan instantioinnissa testitiedoston latauksessa (ei per testi/`cy`-komento), ja metodikutsut (`page.metodi()`) ovat käytännössä yhtä nopeita kuin suorat funktiokutsut V8:ssa. Erot selittyvät edelleen käytännössä täysin ajonaikaisella satunnaisvaihtelulla, ei TypeScript-luokkien käytöllä.
+

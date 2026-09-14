@@ -1,10 +1,16 @@
 import * as gen from '../utils/general-utils'
 
-/** locators */
-export const itemName: string = gen.dataTest('inventory-item-name');
-export const backToProductsButton: string = gen.dataTest('back-to-products');
+export class SauceDemoDetailsPage {
+  /** locators */
+  readonly itemName: string = gen.dataTest('inventory-item-name');
+  readonly backToProductsButton: string = gen.dataTest('back-to-products');
 
-/** functions */
-export const getItemName = (): Cypress.Chainable<string> => cy.get(itemName).invoke('text');
+  /** methods */
+  getItemName(): Cypress.Chainable<string> {
+    return cy.get(this.itemName).invoke('text');
+  }
 
-export const backToProducts = (): Cypress.Chainable => cy.get(backToProductsButton).click();
+  backToProducts(): Cypress.Chainable {
+    return cy.get(this.backToProductsButton).click();
+  }
+}
