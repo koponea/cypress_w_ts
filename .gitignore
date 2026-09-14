@@ -2,6 +2,8 @@
 cypress.env.json
 cypress/downloads/
 
+#dirs
+
 #claude
 CLAUDE.md 
 .claude/
